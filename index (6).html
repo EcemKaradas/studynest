@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#7c6cf0">
+<title>StudyNest | Study planner for students</title>
+<meta name="description" content="StudyNest is a calm study planner for students: timetable, exam prep with progress tracking, assignments, group projects and daily, weekly and monthly lists.">
+<meta property="og:title" content="StudyNest">
+<meta property="og:description" content="A calm study planner: timetable, exam prep progress, assignments and group projects.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%8C%B1%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f3ee; --card:#ffffff; --ink:#2d2a3e; --muted:#7a7690; --line:#ece7df;
+  --brand:#7c6cf0; --brand-soft:#ece9ff; --peach:#ff9f7a; --peach-soft:#fff0e9;
+  --ok:#2fb78a; --ok-soft:#e1f6ee; --warn:#e8962e; --warn-soft:#fff2de; --bad:#e5636b; --bad-soft:#fde8ea;
+  --shadow:0 6px 22px rgba(70,60,120,.08); --radius:18px;
+}
+:root[data-theme=dark]{
+  --bg:#1e1c2b; --card:#2a2840; --ink:#ece9fa; --muted:#a29fbd; --line:#3a3756;
+  --brand:#9d90ff; --brand-soft:#37335a; --peach:#ffab8a; --peach-soft:#433434;
+  --ok:#4fd1a5; --ok-soft:#254440; --warn:#f0b05a; --warn-soft:#46391f; --bad:#f08088; --bad-soft:#4a2a30;
+  --shadow:0 6px 22px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;color:var(--ink);background:var(--bg);font:16px/1.5 "Nunito","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3,h4{margin:0;line-height:1.25}
+.shell{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+/* sidebar */
+.side{position:sticky;top:0;height:100vh;padding:22px 14px;background:var(--card);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;padding:0 10px 16px}
+.logo b{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--peach));color:#fff;font-size:20px}
+.nav{display:flex;align-items:center;gap:12px;padding:11px 14px;border:0;background:none;border-radius:14px;cursor:pointer;font-weight:700;color:var(--muted);text-align:left;width:100%}
+.nav span{font-size:20px;width:26px;text-align:center}
+.nav:hover{background:var(--brand-soft);color:var(--brand)}
+.nav.on{background:var(--brand-soft);color:var(--brand)}
+.nav .dot{margin-left:auto;background:var(--bad);color:#fff;border-radius:99px;font-size:11px;padding:0 7px}
+main{padding:22px 28px 60px;min-width:0}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.top h1{font-size:26px;flex:1}
+.icon{position:relative;width:44px;height:44px;border-radius:14px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:19px;box-shadow:var(--shadow)}
+.icon .badge{position:absolute;top:-5px;right:-5px;background:var(--bad);color:#fff;border-radius:99px;font-size:11px;font-weight:800;padding:1px 6px}
+/* generic */
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.g3{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.card{background:var(--card);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.card h3{font-size:17px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card h3 .sp{flex:1}
+.hero{background:linear-gradient(135deg,var(--brand),#a58bff 55%,var(--peach));color:#fff;border:0;padding:26px 28px;margin-bottom:18px}
+.hero h2{font-size:28px}
+.hero p{margin:6px 0 0;opacity:.95}
+.pills{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.pill{background:rgba(255,255,255,.22);border-radius:99px;padding:6px 14px;font-weight:700;font-size:14px}
+.muted{color:var(--muted)} .small{font-size:13px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:12px;padding:10px 16px;background:var(--brand);color:#fff;font-weight:800;cursor:pointer;min-height:42px}
+.btn:hover{filter:brightness(1.07)}
+.btn.ghost{background:var(--brand-soft);color:var(--brand)}
+.btn.warn{background:var(--bad-soft);color:var(--bad)}
+.btn.sm{min-height:34px;padding:6px 12px;font-size:14px;border-radius:10px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row.end{justify-content:flex-end}
+.sp{flex:1}
+input[type=text],input[type=date],input[type=time],select,textarea{width:100%;padding:11px 13px;border-radius:12px;border:2px solid var(--line);background:var(--card)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand)}
+textarea{min-height:110px;resize:vertical}
+input[type=checkbox]{width:22px;height:22px;accent-color:var(--brand);flex:none;cursor:pointer}
+.item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.item .body{flex:1;min-width:0}
+.item .t{font-weight:700;overflow-wrap:anywhere}
+.item.done .t{text-decoration:line-through;color:var(--muted)}
+.tag{display:inline-block;font-size:12px;font-weight:800;padding:2px 10px;border-radius:99px;background:var(--brand-soft);color:var(--brand)}
+.tag.ok{background:var(--ok-soft);color:var(--ok)} .tag.warn{background:var(--warn-soft);color:var(--warn)} .tag.bad{background:var(--bad-soft);color:var(--bad)}
+.dotc{display:inline-block;width:12px;height:12px;border-radius:50%;flex:none}
+.x{border:0;background:none;color:var(--muted);cursor:pointer;font-size:17px;padding:4px 8px;border-radius:8px}
+.x:hover{background:var(--bad-soft);color:var(--bad)}
+.bar{height:11px;border-radius:99px;background:var(--brand-soft);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--brand),var(--peach));transition:width .4s}
+.bar.full i{background:linear-gradient(90deg,var(--ok),#7ad9b6)}
+.barrow{display:flex;align-items:center;gap:10px}.barrow .bar{flex:1}.barrow b{min-width:44px;text-align:right}
+.empty{text-align:center;color:var(--muted);padding:18px 6px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chip{border:2px solid var(--line);background:var(--card);border-radius:99px;padding:6px 16px;font-weight:800;cursor:pointer;color:var(--muted)}
+.chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.course-card{border-top:6px solid var(--c,var(--brand));cursor:pointer;transition:transform .15s}
+.course-card:hover{transform:translateY(-3px)}
+.back{border:0;background:none;color:var(--brand);font-weight:800;cursor:pointer;padding:0 0 12px;font-size:15px}
+.group{margin:18px 0 6px;font-weight:800;color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:.8px}
+.group.bad{color:var(--bad)}
+.topic{padding:8px 0;border-bottom:1px solid var(--line)}
+.subs{margin:6px 0 0 34px;display:grid;gap:4px}
+.sub{display:flex;align-items:center;gap:10px}
+.avatar{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--brand);color:#fff;font-weight:800;font-size:13px;flex:none}
+.avatars{display:flex}.avatars .avatar{margin-right:-8px;border:2px solid var(--card)}
+.inline{display:flex;gap:8px;margin-top:10px}.inline input{flex:1}
+/* modal */
+dialog.modal{border:0;border-radius:22px;padding:0;width:min(480px,94vw);background:var(--card);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+dialog::backdrop{background:rgba(30,25,60,.45)}
+dialog .inner{padding:22px;display:grid;gap:12px;max-height:86vh;overflow:auto}
+dialog label{display:grid;gap:5px;font-weight:700;font-size:14px}
+/* calendar */
+.week{display:grid;grid-template-columns:46px repeat(7,minmax(96px,1fr));min-width:780px}
+.wk-scroll{overflow-x:auto}
+.wk-head{padding:6px 4px;text-align:center;font-weight:800;border-bottom:2px solid var(--line)}
+.wk-head.today{color:var(--brand)}
+.wk-head small{display:block;font-weight:600;color:var(--muted)}
+.wk-all{padding:4px;border-bottom:1px solid var(--line);min-height:34px;display:grid;gap:3px;align-content:start}
+.chipx{font-size:11.5px;font-weight:800;padding:2px 7px;border-radius:8px;background:var(--brand-soft);color:var(--brand);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-left:4px solid var(--c,var(--brand))}
+.wk-col{position:relative;border-left:1px solid var(--line)}
+.wk-hours div{height:var(--ph);font-size:11px;color:var(--muted);text-align:right;padding-right:6px;transform:translateY(-8px)}
+.blk{position:absolute;left:3px;right:3px;border-radius:10px;padding:4px 7px;font-size:12px;font-weight:800;color:#fff;overflow:hidden;background:var(--c);box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.blk small{display:block;font-weight:600;opacity:.92}
+.month{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.mh{text-align:center;font-weight:800;color:var(--muted);font-size:13px}
+.cell{min-height:92px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px;cursor:pointer;display:grid;align-content:start;gap:3px}
+.cell:hover{border-color:var(--brand)}
+.cell.other{opacity:.45}.cell.today{border:2px solid var(--brand);background:var(--brand-soft)}
+.cell b{font-size:13px}
+.more{font-size:11px;color:var(--muted);font-weight:700}
+/* bell panel */
+.panel{position:fixed;top:70px;right:24px;width:min(380px,92vw);max-height:70vh;overflow:auto;z-index:20;background:var(--card);border-radius:18px;box-shadow:0 14px 50px rgba(0,0,0,.25);border:1px solid var(--line);padding:16px 18px}
+.confetti{position:fixed;pointer-events:none;z-index:60;font-size:26px;animation:fly 1.4s ease-out forwards}
+@keyframes fly{from{opacity:1;transform:translate(0,0) rotate(0)}to{opacity:0;transform:translate(var(--dx),-240px) rotate(300deg)}}
+.file{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.file:last-child{border-bottom:0}
+@media(max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .side{position:fixed;bottom:0;top:auto;left:0;right:0;height:auto;z-index:15;flex-direction:row;overflow-x:auto;padding:6px 6px calc(6px + env(safe-area-inset-bottom));border-right:0;border-top:1px solid var(--line);gap:2px}
+  .logo{display:none}
+  .nav{flex-direction:column;gap:0;padding:6px 10px;font-size:11px;width:auto;min-width:64px;text-align:center}
+  .nav .dot{position:absolute;margin:0;transform:translate(14px,-4px)}
+  .nav{position:relative}
+  main{padding:16px 14px 100px}
+  .top h1{font-size:22px}
+  .hero h2{font-size:23px}
+  .card .row>h2{flex:1 1 100%!important;font-size:21px}
+  .panel{right:10px;top:64px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+'use strict';
+/* ============ helpers ============ */
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const DAYS_LONG = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const COLORS = ['#7c6cf0', '#ff8a65', '#2fb7a3', '#f2a93b', '#e86a9a', '#4aa3e8', '#8bc34a', '#9575cd'];
+const QUOTES = [
+  'Small steps every day add up to big results.',
+  'You do not have to be perfect, just keep going.',
+  'Future you will thank you for studying today.',
+  'Progress, not perfection.',
+  'One topic at a time. You have got this!',
+  'Start with the easiest topic to build momentum.',
+  'A 25-minute focus session beats a 3-hour worry.',
+  'Done is better than perfect. Tick one thing off!',
+  'Rest is part of studying too. Take breaks.',
+  'You are closer than you think.',
+];
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const uid = () => Math.random().toString(36).slice(2, 10);
+const pad = (n) => String(n).padStart(2, '0');
+const iso = (d) => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const parseISO = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const todayISO = () => iso(new Date());
+const dayIdx = (d) => (d.getDay() + 6) % 7;            // Monday = 0
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const mondayOf = (d) => addDays(d, -dayIdx(d));
+const daysUntil = (s) => Math.round((parseISO(s) - parseISO(todayISO())) / 864e5);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmtDate = (s) => parseISO(s).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+const fmtLong = (d) => d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+const toMin = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
+const fmtSize = (b) => b > 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB';
+
+function rel(dateStr) {
+  const n = daysUntil(dateStr);
+  if (n < -1) return { text: `${-n} days overdue`, cls: 'bad' };
+  if (n === -1) return { text: '1 day overdue', cls: 'bad' };
+  if (n === 0) return { text: 'Today', cls: 'bad' };
+  if (n === 1) return { text: 'Tomorrow', cls: 'warn' };
+  if (n <= 3) return { text: `In ${n} days`, cls: 'warn' };
+  if (n <= 14) return { text: `In ${n} days`, cls: '' };
+  return { text: fmtDate(dateStr), cls: 'ok' };
+}
+function periodKey(kind) {
+  const now = new Date();
+  if (kind === 'daily') return iso(now);
+  if (kind === 'weekly') return 'W' + iso(mondayOf(now));
+  return 'M' + now.getFullYear() + '-' + pad(now.getMonth() + 1);
+}
+
+/* ============ state + storage ============ */
+const KEY = 'studynest.v1';
+function defaults() {
+  return { name: '', theme: 'light', courses: [], exams: [], tasks: [], projects: [], files: [], lists: { daily: [], weekly: [], monthly: [] } };
+}
+let S = (function load() {
+  try { const j = JSON.parse(localStorage.getItem(KEY)); if (j) return Object.assign(defaults(), j); } catch (e) {}
+  return defaults();
+})();
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+function commit() { save(); render(); }
+
+/* lookups */
+const courseOf = (id) => S.courses.find((c) => c.id === id);
+const colorOf = (id) => (courseOf(id) || {}).color || '#9a95b5';
+const nameOf = (id) => (courseOf(id) || {}).name || '';
+
+/* progress */
+function leaves(e) {
+  let t = 0, d = 0;
+  for (const tp of e.topics) {
+    if (tp.subs && tp.subs.length) for (const s of tp.subs) { t++; if (s.done) d++; }
+    else { t++; if (tp.done) d++; }
+  }
+  return { t, d, p: t ? Math.round((d / t) * 100) : 0 };
+}
+function projProgress(p) {
+  const t = p.tasks.length, d = p.tasks.filter((x) => x.done).length;
+  return { t, d, p: t ? Math.round((d / t) * 100) : 0 };
+}
+const bar = (p) => `<div class="bar ${p >= 100 ? 'full' : ''}"><i style="width:${p}%"></i></div>`;
+const barRow = (p, label) => `<div class="barrow">${bar(p)}<b>${label ?? p + '%'}</b></div>`;
+
+/* deadlines (everything with a date that is not finished) */
+function deadlines() {
+  const out = [];
+  for (const t of S.tasks) if (!t.done && t.due) out.push({ kind: 'task', title: t.title, date: t.due, course: t.courseId, go: 'tasks' });
+  for (const p of S.projects) {
+    if (!p.done && p.due) out.push({ kind: 'project', title: p.title, date: p.due, course: p.courseId, go: 'project:' + p.id });
+    for (const x of p.tasks) if (!x.done && x.due) out.push({ kind: 'ptask', title: `${x.title} (${p.title})`, date: x.due, course: p.courseId, go: 'project:' + p.id });
+  }
+  for (const e of S.exams) out.push({ kind: 'exam', title: examTitle(e), date: e.date, course: e.courseId, go: 'exam:' + e.id, time: e.time });
+  return out.sort((a, b) => a.date.localeCompare(b.date));
+}
+const examTitle = (e) => (e.title || `${nameOf(e.courseId) || 'Course'} ${e.type}`).trim();
+const KIND_ICON = { task: '✅', project: '👥', ptask: '🧩', exam: '📝' };
+function reminders() {
+  return deadlines().filter((d) => {
+    const n = daysUntil(d.date);
+    return d.kind === 'exam' ? n >= 0 && n <= 14 : n <= 7;
+  });
+}
+function urgentCount() { return reminders().filter((d) => daysUntil(d.date) <= 2).length; }
+
+/* ============ small UI helpers ============ */
+function confetti() {
+  const em = ['🎉', '✨', '⭐', '🌟', '💜', '🎊'];
+  for (let i = 0; i < 16; i++) {
+    const s = document.createElement('span');
+    s.className = 'confetti'; s.textContent = em[i % em.length];
+    s.style.left = 30 + Math.random() * 40 + 'vw'; s.style.top = '60vh';
+    s.style.setProperty('--dx', (Math.random() * 300 - 150) + 'px');
+    document.body.appendChild(s); setTimeout(() => s.remove(), 1500);
+  }
+}
+function openModal(html) {
+  const d = document.createElement('dialog'); d.className = 'modal';
+  d.innerHTML = `<div class="inner">${html}</div>`;
+  d.addEventListener('close', () => d.remove());
+  document.body.appendChild(d); d.showModal(); return d;
+}
+function fieldHTML(f, v) {
+  const val = v ?? f.value ?? '';
+  let input;
+  if (f.type === 'select') input = `<select name="${f.name}" ${f.required ? 'required' : ''}>${f.options.map((o) => `<option value="${esc(o.v)}" ${o.v === val ? 'selected' : ''}>${esc(o.l)}</option>`).join('')}</select>`;
+  else if (f.type === 'textarea') input = `<textarea name="${f.name}" placeholder="${esc(f.placeholder || '')}">${esc(val)}</textarea>`;
+  else input = `<input type="${f.type || 'text'}" name="${f.name}" value="${esc(val)}" placeholder="${esc(f.placeholder || '')}" ${f.required ? 'required' : ''} ${f.type === 'color' ? '' : 'autocomplete="off"'}>`;
+  return `<label>${esc(f.label)}${input}</label>`;
+}
+function formDialog(title, fields, values, onOk) {
+  const d = openModal(`<h3>${esc(title)}</h3><form>${fields.map((f) => fieldHTML(f, values[f.name])).join('<div style="height:12px"></div>')}<div class="row end" style="margin-top:16px"><button type="button" class="btn ghost" data-close>Cancel</button><button class="btn">Save</button></div></form>`);
+  $('[data-close]', d).onclick = () => d.close();
+  $('form', d).onsubmit = (e) => {
+    e.preventDefault();
+    const vals = Object.fromEntries(new FormData(e.target).entries());
+    for (const k in vals) if (typeof vals[k] === 'string') vals[k] = vals[k].trim();
+    d.close(); onOk(vals);
+  };
+  const first = $('input,textarea', d); if (first && first.type !== 'color') first.focus();
+}
+const courseOptions = (withNone = true) => (withNone ? [{ v: '', l: '— No course —' }] : []).concat(S.courses.map((c) => ({ v: c.id, l: c.name })));
+
+/* ============ files (blobs live in IndexedDB, names in state) ============ */
+function idb() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open('studynest-files', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('f');
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+}
+async function idbDo(mode, fn) {
+  const db = await idb();
+  return new Promise((res, rej) => { const t = db.transaction('f', mode); const q = fn(t.objectStore('f')); t.oncomplete = () => res(q && q.result); t.onerror = () => rej(t.error); });
+}
+async function addFiles(owner, fileList) {
+  for (const f of fileList) {
+    if (f.size > 15 * 1048576) { alert(`"${f.name}" is bigger than 15 MB.`); continue; }
+    const id = uid();
+    try { await idbDo('readwrite', (s) => s.put(f, id)); } catch (e) { alert('Could not store the file in this browser.'); return; }
+    S.files.push({ id, owner, name: f.name, size: f.size });
+  }
+  commit();
+}
+async function downloadFile(id) {
+  const meta = S.files.find((f) => f.id === id); if (!meta) return;
+  try {
+    const blob = await idbDo('readonly', (s) => s.get(id));
+    if (!blob) return alert('File not found in this browser.');
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = meta.name; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  } catch (e) { alert('Could not open the file.'); }
+}
+async function removeFile(id) {
+  try { await idbDo('readwrite', (s) => s.delete(id)); } catch (e) {}
+  S.files = S.files.filter((f) => f.id !== id); commit();
+}
+function filesBox(owner) {
+  const list = S.files.filter((f) => f.owner === owner);
+  return `<div>${list.map((f) => `<div class="file"><span>📎</span><div class="body" style="flex:1;min-width:0"><div class="t" style="overflow-wrap:anywhere">${esc(f.name)}</div><div class="small muted">${fmtSize(f.size)}</div></div><button class="btn ghost sm" data-act="file-dl" data-id="${f.id}">Open</button><button class="x" data-act="file-del" data-id="${f.id}" aria-label="Delete file">🗑</button></div>`).join('') || '<div class="muted small" style="padding:4px 0 8px">No files yet. Upload lecture notes, slides or PDFs.</div>'}
+  <label class="btn ghost sm" style="margin-top:8px;cursor:pointer">⬆ Upload files<input type="file" multiple hidden data-upload="${esc(owner)}"></label></div>`;
+}
+
+/* ============ navigation state ============ */
+let view = 'today', calMode = 'week', calAnchor = new Date(), taskFilter = 'open', bellOpen = false, refocus = null;
+const NAV = [['today', '🏠', 'Today'], ['calendar', '📅', 'Calendar'], ['courses', '📚', 'Courses'], ['exams', '📝', 'Exams'], ['tasks', '✅', 'Tasks'], ['projects', '👥', 'Projects'], ['lists', '🔁', 'Lists']];
+
+function go(v) { view = v; bellOpen = false; render(); window.scrollTo(0, 0); }
+const goBtn = (v, label) => `<button class="back" data-act="go" data-view="${v}">← ${label}</button>`;
+const dueTag = (d) => { const r = rel(d); return `<span class="tag ${r.cls}">${r.text}</span>`; };
+const courseTag = (id) => id ? `<span class="small muted"><span class="dotc" style="background:${colorOf(id)}"></span> ${esc(nameOf(id))}</span>` : '';
+
+/* ============ shell ============ */
+function render() {
+  const keepY = window.scrollY;
+  document.documentElement.dataset.theme = S.theme;
+  const page = view.split(':')[0];
+  const nav = page === 'course' ? 'courses' : page === 'exam' ? 'exams' : page === 'project' ? 'projects' : page;
+  const urgent = urgentCount();
+  const titles = { today: 'Today', calendar: 'Calendar', courses: 'Courses', course: 'Course', exams: 'Exams', exam: 'Exam prep', tasks: 'Tasks & assignments', projects: 'Group projects', project: 'Project', lists: 'My lists' };
+  const fn = { today: viewToday, calendar: viewCalendar, courses: viewCourses, course: viewCourse, exams: viewExams, exam: viewExam, tasks: viewTasks, projects: viewProjects, project: viewProject, lists: viewLists }[page] || viewToday;
+  $('#app').innerHTML = `<div class="shell">
+    <nav class="side"><div class="logo"><b>🌱</b>StudyNest</div>
+      ${NAV.map(([id, ic, label]) => `<button class="nav ${nav === id ? 'on' : ''}" data-act="go" data-view="${id}"><span>${ic}</span>${label}${id === 'today' && urgent ? `<i class="dot">${urgent}</i>` : ''}</button>`).join('')}
+    </nav>
+    <main><div class="top"><h1>${titles[page] || ''}</h1>
+      <button class="icon" data-act="bell" aria-label="Reminders">🔔${urgent ? `<span class="badge">${urgent}</span>` : ''}</button>
+      <button class="icon" data-act="settings" aria-label="Settings">⚙️</button></div>
+      <div id="view">${fn(view.split(':')[1])}</div></main>
+    ${bellOpen ? bellPanel() : ''}</div>`;
+  $$('[data-indet]').forEach((el) => (el.indeterminate = true));
+  if (refocus) { const el = $(refocus); if (el) el.focus(); refocus = null; }
+  window.scrollTo(0, keepY);
+}
+function bellPanel() {
+  const r = reminders();
+  return `<div class="panel"><h3 style="margin-bottom:10px">🔔 Coming up</h3>${r.length ? r.map(reminderRow).join('') : '<div class="empty">Nothing due soon. Enjoy the calm! 🌿</div>'}</div>`;
+}
+function reminderRow(d) {
+  return `<div class="item" style="cursor:pointer" data-act="go" data-view="${d.go}"><span style="font-size:20px">${KIND_ICON[d.kind]}</span><div class="body"><div class="t">${esc(d.title)}</div>${courseTag(d.course)}</div>${dueTag(d.date)}</div>`;
+}
+
+/* ============ TODAY ============ */
+function viewToday() {
+  const now = new Date(), h = now.getHours();
+  const greet = h < 5 ? 'Still up' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  const quote = QUOTES[(now.getDate() + now.getMonth()) % QUOTES.length];
+  const weekEnd = iso(addDays(now, 6));
+  const dueWeek = deadlines().filter((d) => d.date >= todayISO() && d.date <= weekEnd).length;
+  const upcoming = S.exams.filter((e) => daysUntil(e.date) >= 0).sort((a, b) => a.date.localeCompare(b.date));
+  let T = 0, D = 0; upcoming.forEach((e) => { const l = leaves(e); T += l.t; D += l.d; });
+  const prep = T ? Math.round((D / T) * 100) : null;
+  const classes = [];
+  S.courses.forEach((c) => c.slots.forEach((s) => { if (s.day === dayIdx(now)) classes.push({ c, s }); }));
+  classes.sort((a, b) => a.s.start.localeCompare(b.s.start));
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  const dk = periodKey('daily'), daily = S.lists.daily, dDone = daily.filter((i) => i.doneOn === dk).length;
+
+  const hero = `<div class="card hero"><h2>${greet}${S.name ? ', ' + esc(S.name) : ''} 👋</h2><p>${fmtLong(now)}</p><p style="margin-top:12px;font-weight:700">“${quote}”</p>
+    <div class="pills"><span class="pill">📌 ${dueWeek} due this week</span>${prep !== null ? `<span class="pill">📖 ${prep}% exam topics done</span>` : ''}<span class="pill">☀️ ${dDone}/${daily.length} daily tasks</span></div></div>`;
+  const welcome = !S.courses.length ? `<div class="card" style="margin-bottom:18px"><h3>🌱 Welcome to StudyNest</h3>
+    <p class="muted" style="margin-top:0">Plan your classes, exams, assignments and group projects in one calm place. Start by adding your courses.</p>
+    ${S.name ? '' : `<form data-form="name" class="inline" style="margin-bottom:12px"><input type="text" name="name" placeholder="What should I call you?"><button class="btn ghost">Save name</button></form>`}
+    <div class="row"><button class="btn" data-act="course-add">➕ Add my first course</button><button class="btn ghost" data-act="sample">✨ Try with sample data</button></div></div>` : '';
+
+  const classesCard = `<div class="card"><h3>🎒 Today's classes</h3>${classes.length ? classes.map(({ c, s }) => {
+    const on = nowMin >= toMin(s.start) && nowMin < toMin(s.end);
+    return `<div class="item"><span class="dotc" style="background:${c.color}"></span><div class="body"><div class="t">${esc(c.name)}</div><div class="small muted">${s.start} – ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</div></div>${on ? '<span class="tag ok">Now</span>' : ''}</div>`;
+  }).join('') : '<div class="empty">No classes today. Use the time well! 🎉</div>'}</div>`;
+  const rem = reminders();
+  const remCard = `<div class="card"><h3>🔔 Coming up <span class="sp"></span><button class="btn ghost sm" data-act="go" data-view="calendar">Calendar</button></h3>${rem.length ? rem.slice(0, 6).map(reminderRow).join('') + (rem.length > 6 ? `<div class="small muted" style="padding-top:8px">+ ${rem.length - 6} more</div>` : '') : '<div class="empty">Nothing due soon. 🌿</div>'}</div>`;
+  const dailyCard = `<div class="card"><h3>☀️ Today's checklist <span class="sp"></span><span class="small muted">${dDone}/${daily.length}</span></h3>${daily.length ? barRow(Math.round(dDone / daily.length * 100)) : ''}${listItems('daily')}
+    <form data-form="li-add" data-kind="daily" class="inline"><input type="text" name="title" placeholder="Add something for today" autocomplete="off"><button class="btn ghost">Add</button></form></div>`;
+  const prepCard = `<div class="card"><h3>📖 Exam prep <span class="sp"></span><button class="btn ghost sm" data-act="go" data-view="exams">All exams</button></h3>${upcoming.length ? upcoming.slice(0, 4).map((e) => { const l = leaves(e); return `<div style="padding:8px 0;cursor:pointer" data-act="go" data-view="exam:${e.id}"><div class="row"><b>${esc(examTitle(e))}</b><span class="sp"></span>${dueTag(e.date)}</div>${l.t ? barRow(l.p) : '<div class="small muted">Add topics to track your progress</div>'}</div>`; }).join('') : '<div class="empty">No upcoming exams. Add one in the Exams tab.</div>'}</div>`;
+  return hero + welcome + `<div class="grid g2">${classesCard}${remCard}${dailyCard}${prepCard}</div>`;
+}
+
+/* ============ LISTS (daily / weekly / monthly, they reset by themselves) ============ */
+function listItems(kind) {
+  const key = periodKey(kind);
+  return S.lists[kind].map((i) => `<div class="item ${i.doneOn === key ? 'done' : ''}"><input type="checkbox" ${i.doneOn === key ? 'checked' : ''} data-chg="li-toggle" data-kind="${kind}" data-id="${i.id}"><div class="body"><div class="t">${esc(i.title)}</div></div><button class="x" data-act="li-del" data-kind="${kind}" data-id="${i.id}" aria-label="Delete">✕</button></div>`).join('');
+}
+function viewLists() {
+  const meta = { daily: ['☀️', 'Daily', 'Resets every day'], weekly: ['📆', 'Weekly', 'Resets every Monday'], monthly: ['🗓️', 'Monthly', 'Resets on the 1st'] };
+  return `<p class="muted" style="margin-top:0">Repeating to-do lists. Tick things off and they come back fresh when the day, week or month changes.</p><div class="grid g3">` +
+    ['daily', 'weekly', 'monthly'].map((k) => {
+      const key = periodKey(k), arr = S.lists[k], d = arr.filter((i) => i.doneOn === key).length;
+      return `<div class="card"><h3>${meta[k][0]} ${meta[k][1]} <span class="sp"></span><span class="small muted">${d}/${arr.length}</span></h3><div class="small muted" style="margin:-6px 0 10px">${meta[k][2]}</div>${arr.length ? barRow(Math.round(d / arr.length * 100)) : ''}${listItems(k) || '<div class="empty">Nothing here yet.</div>'}
+      <form data-form="li-add" data-kind="${k}" class="inline"><input type="text" name="title" placeholder="Add an item" autocomplete="off"><button class="btn ghost">Add</button></form></div>`;
+    }).join('') + '</div>';
+}
+
+/* ============ COURSES ============ */
+function viewCourses() {
+  const cards = S.courses.map((c) => {
+    const ex = S.exams.filter((e) => e.courseId === c.id && daysUntil(e.date) >= 0).sort((a, b) => a.date.localeCompare(b.date))[0];
+    const open = S.tasks.filter((t) => t.courseId === c.id && !t.done).length + S.projects.filter((p) => p.courseId === c.id && !p.done).length;
+    return `<div class="card course-card" style="--c:${c.color}" data-act="go" data-view="course:${c.id}"><h3 style="font-size:19px">${esc(c.name)}</h3>
+      <div class="muted small">${c.teacher ? esc(c.teacher) : 'No instructor added'}</div>
+      <div class="small" style="margin:10px 0">${c.slots.map((s) => `${DAYS[s.day]} ${s.start}`).join(' · ') || '<span class="muted">No class times yet</span>'}</div>
+      <div class="row"><span class="tag">${open} open</span>${ex ? `<span class="tag ${rel(ex.date).cls}">${esc(ex.type)}: ${rel(ex.date).text}</span>` : ''}</div></div>`;
+  }).join('');
+  return `<div class="row" style="margin-bottom:16px"><button class="btn" data-act="course-add">➕ Add course</button></div>` +
+    (S.courses.length ? `<div class="grid g3">${cards}</div>` : '<div class="card empty">No courses yet. Add your first one to get started.</div>');
+}
+function viewCourse(id) {
+  const c = courseOf(id); if (!c) return goBtn('courses', 'Courses') + '<div class="empty">Course not found.</div>';
+  const exams = S.exams.filter((e) => e.courseId === id).sort((a, b) => a.date.localeCompare(b.date));
+  const tasks = S.tasks.filter((t) => t.courseId === id), projs = S.projects.filter((p) => p.courseId === id);
+  return goBtn('courses', 'All courses') + `<div class="card" style="border-top:6px solid ${c.color};margin-bottom:18px">
+    <div class="row"><h2 style="flex:1">${esc(c.name)}</h2><button class="btn ghost sm" data-act="course-edit" data-id="${id}">✏️ Edit</button><button class="btn warn sm" data-act="course-del" data-id="${id}">🗑 Delete</button></div>
+    <div class="muted">${c.teacher ? esc(c.teacher) : ''}</div></div>
+    <div class="grid g2">
+    <div class="card"><h3>🕘 Weekly schedule <span class="sp"></span><button class="btn ghost sm" data-act="slot-add" data-id="${id}">➕ Add</button></h3>${c.slots.map((s, i) => `<div class="item"><div class="body"><div class="t">${DAYS_LONG[s.day]}</div><div class="small muted">${s.start} – ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</div></div><button class="x" data-act="slot-del" data-id="${id}" data-i="${i}">✕</button></div>`).join('') || '<div class="empty">No class times yet.</div>'}</div>
+    <div class="card"><h3>📝 Exams <span class="sp"></span><button class="btn ghost sm" data-act="exam-add" data-course="${id}">➕ Add</button></h3>${exams.map((e) => { const l = leaves(e); return `<div style="padding:8px 0;cursor:pointer" data-act="go" data-view="exam:${e.id}"><div class="row"><b>${esc(examTitle(e))}</b><span class="sp"></span>${dueTag(e.date)}</div>${l.t ? barRow(l.p) : ''}</div>`; }).join('') || '<div class="empty">No exams yet.</div>'}</div>
+    <div class="card"><h3>✅ Tasks <span class="sp"></span><button class="btn ghost sm" data-act="task-add" data-course="${id}">➕ Add</button></h3>${tasks.map(taskRow).join('') || '<div class="empty">No tasks yet.</div>'}</div>
+    <div class="card"><h3>👥 Group projects <span class="sp"></span><button class="btn ghost sm" data-act="proj-add" data-course="${id}">➕ Add</button></h3>${projs.map((p) => `<div style="padding:8px 0;cursor:pointer" data-act="go" data-view="project:${p.id}"><div class="row"><b>${esc(p.title)}</b><span class="sp"></span>${p.due ? dueTag(p.due) : ''}</div>${barRow(projProgress(p).p)}</div>`).join('') || '<div class="empty">No projects yet.</div>'}</div>
+    <div class="card"><h3>🗒️ Course notes</h3><textarea data-note="course" data-id="${id}" placeholder="Syllabus, grading rules, tips...">${esc(c.notes || '')}</textarea></div>
+    <div class="card"><h3>📎 Lecture notes & files</h3>${filesBox('course:' + id)}</div></div>`;
+}
+
+/* ============ EXAMS ============ */
+function viewExams() {
+  const sorted = S.exams.slice().sort((a, b) => a.date.localeCompare(b.date));
+  const up = sorted.filter((e) => daysUntil(e.date) >= 0), past = sorted.filter((e) => daysUntil(e.date) < 0);
+  const card = (e) => { const l = leaves(e); return `<div class="card" style="cursor:pointer;border-left:6px solid ${colorOf(e.courseId)}" data-act="go" data-view="exam:${e.id}"><div class="row"><h3 style="margin:0">${esc(examTitle(e))}</h3><span class="sp"></span>${dueTag(e.date)}</div>
+    <div class="small muted" style="margin:4px 0 10px">${fmtDate(e.date)}${e.time ? ' · ' + e.time : ''}${e.place ? ' · ' + esc(e.place) : ''}</div>${l.t ? barRow(l.p, `${l.d}/${l.t}`) : '<div class="small muted">No study topics yet</div>'}</div>`; };
+  return `<div class="row" style="margin-bottom:16px"><button class="btn" data-act="exam-add">➕ Add exam</button></div>` +
+    (up.length ? `<div class="grid g2">${up.map(card).join('')}</div>` : '<div class="card empty">No upcoming exams. Add your midterms and finals here.</div>') +
+    (past.length ? `<div class="group">Past exams</div><div class="grid g2" style="opacity:.75">${past.map(card).join('')}</div>` : '');
+}
+function topicHTML(e, tp) {
+  const subs = tp.subs || [], d = subs.filter((s) => s.done).length;
+  const checked = subs.length ? d === subs.length : tp.done;
+  return `<div class="topic"><div class="row" style="flex-wrap:nowrap"><input type="checkbox" ${checked ? 'checked' : ''} ${subs.length && d > 0 && d < subs.length ? 'data-indet' : ''} data-chg="topic-toggle" data-id="${e.id}" data-tid="${tp.id}"><b style="flex:1;min-width:0;overflow-wrap:anywhere;${checked ? 'text-decoration:line-through;color:var(--muted)' : ''}">${esc(tp.title)}</b>${subs.length ? `<span class="small muted">${d}/${subs.length}</span>` : ''}
+    <button class="x" title="Add subtopic" data-act="sub-add" data-id="${e.id}" data-tid="${tp.id}">➕</button><button class="x" title="Rename" data-act="topic-rename" data-id="${e.id}" data-tid="${tp.id}">✏️</button><button class="x" title="Delete" data-act="topic-del" data-id="${e.id}" data-tid="${tp.id}">🗑</button></div>
+    ${subs.length ? `<div class="subs">${subs.map((s) => `<div class="sub"><input type="checkbox" ${s.done ? 'checked' : ''} data-chg="sub-toggle" data-id="${e.id}" data-tid="${tp.id}" data-sid="${s.id}"><span style="flex:1;overflow-wrap:anywhere;${s.done ? 'text-decoration:line-through;color:var(--muted)' : ''}">${esc(s.title)}</span><button class="x" data-act="sub-del" data-id="${e.id}" data-tid="${tp.id}" data-sid="${s.id}">✕</button></div>`).join('')}</div>` : ''}</div>`;
+}
+function viewExam(id) {
+  const e = S.exams.find((x) => x.id === id); if (!e) return goBtn('exams', 'Exams') + '<div class="empty">Exam not found.</div>';
+  const l = leaves(e);
+  return goBtn('exams', 'All exams') + `<div class="card" style="border-left:6px solid ${colorOf(e.courseId)};margin-bottom:18px">
+    <div class="row"><h2 style="flex:1">${esc(examTitle(e))}</h2>${dueTag(e.date)}<button class="btn ghost sm" data-act="exam-edit" data-id="${id}">✏️ Edit</button><button class="btn warn sm" data-act="exam-del" data-id="${id}">🗑</button></div>
+    <div class="muted" style="margin:4px 0 14px">${courseTag(e.courseId)} · ${fmtDate(e.date)}${e.time ? ' at ' + e.time : ''}${e.place ? ' · ' + esc(e.place) : ''}</div>
+    ${barRow(l.p, l.t ? `${l.p}%` : '—')}<div class="small muted" style="margin-top:6px">${l.t ? (l.p >= 100 ? '🎉 Everything covered. You are ready!' : `${l.d} of ${l.t} topics done. Keep going!`) : 'Add the topics that will be on the exam to track your progress.'}</div></div>
+    <div class="grid g2"><div class="card"><h3>📖 Study topics</h3>${e.topics.map((tp) => topicHTML(e, tp)).join('') || '<div class="empty">No topics yet.</div>'}
+      <form data-form="topic-add" data-id="${id}" class="inline"><input type="text" name="title" placeholder="Add a topic (e.g. Binary trees)" autocomplete="off"><button class="btn ghost">Add</button></form></div>
+    <div><div class="card" style="margin-bottom:18px"><h3>🗒️ Notes</h3><textarea data-note="exam" data-id="${id}" placeholder="What will be asked? Formulas, tips, past questions...">${esc(e.notes || '')}</textarea></div>
+    <div class="card"><h3>📎 Study files</h3>${filesBox('exam:' + id)}</div></div></div>`;
+}
+
+/* ============ TASKS ============ */
+function taskRow(t) {
+  return `<div class="item ${t.done ? 'done' : ''}"><input type="checkbox" ${t.done ? 'checked' : ''} data-chg="task-toggle" data-id="${t.id}"><div class="body"><div class="t">${esc(t.title)}</div><div class="row" style="gap:8px">${courseTag(t.courseId)}${t.notes ? `<span class="small muted">· ${esc(t.notes).slice(0, 60)}</span>` : ''}</div></div>${t.due ? dueTag(t.due) : ''}<button class="x" data-act="task-edit" data-id="${t.id}">✏️</button><button class="x" data-act="task-del" data-id="${t.id}">🗑</button></div>`;
+}
+function viewTasks() {
+  const all = S.tasks, open = all.filter((t) => !t.done), done = all.filter((t) => t.done);
+  let body;
+  if (taskFilter === 'done') body = done.map(taskRow).join('') || '<div class="empty">Nothing completed yet.</div>';
+  else {
+    const src = taskFilter === 'all' ? all : open;
+    const g = { over: [], today: [], week: [], later: [], none: [] };
+    src.forEach((t) => { if (!t.due) g.none.push(t); else { const n = daysUntil(t.due); (t.done ? g.later : n < 0 ? g.over : n === 0 ? g.today : n <= 7 ? g.week : g.later).push(t); } });
+    Object.values(g).forEach((a) => a.sort((x, y) => (x.due || '9').localeCompare(y.due || '9')));
+    const sec = (title, arr, cls = '') => arr.length ? `<div class="group ${cls}">${title}</div>${arr.map(taskRow).join('')}` : '';
+    body = sec('Overdue', g.over, 'bad') + sec('Today', g.today) + sec('This week', g.week) + sec('Later', g.later) + sec('No date', g.none) || '<div class="empty">All clear! Add a new assignment when you get one. 🌿</div>';
+  }
+  return `<div class="row" style="margin-bottom:16px"><button class="btn" data-act="task-add">➕ Add task</button><span class="sp"></span></div>
+    <div class="chips">${[['open', `Open (${open.length})`], ['done', `Done (${done.length})`], ['all', 'All']].map(([k, l]) => `<button class="chip ${taskFilter === k ? 'on' : ''}" data-act="filter" data-k="${k}">${l}</button>`).join('')}</div>
+    <div class="card">${body}</div>`;
+}
+
+/* ============ PROJECTS ============ */
+const initials = (n) => (n || '?').trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+const memberColor = (p, mid) => COLORS[Math.max(0, p.members.findIndex((m) => m.id === mid)) % COLORS.length];
+const avatar = (p, m) => `<span class="avatar" style="background:${memberColor(p, m.id)}" title="${esc(m.name)}">${esc(initials(m.name))}</span>`;
+function viewProjects() {
+  const cards = S.projects.slice().sort((a, b) => (a.due || '9').localeCompare(b.due || '9')).map((p) => { const pr = projProgress(p); return `<div class="card course-card" style="--c:${colorOf(p.courseId)}" data-act="go" data-view="project:${p.id}">
+    <div class="row"><h3 style="margin:0;flex:1">${esc(p.title)}</h3>${p.done ? '<span class="tag ok">Done</span>' : p.due ? dueTag(p.due) : ''}</div><div style="margin:4px 0 12px">${courseTag(p.courseId)}</div>
+    ${pr.t ? barRow(pr.p, `${pr.d}/${pr.t}`) : '<div class="small muted">No tasks yet</div>'}<div class="avatars" style="margin-top:14px">${p.members.map((m) => avatar(p, m)).join('')}</div></div>`; }).join('');
+  return `<div class="row" style="margin-bottom:16px"><button class="btn" data-act="proj-add">➕ New project</button></div>` + (cards ? `<div class="grid g3">${cards}</div>` : '<div class="card empty">No projects yet. Add a group project and split the tasks between your teammates.</div>');
+}
+function viewProject(id) {
+  const p = S.projects.find((x) => x.id === id); if (!p) return goBtn('projects', 'Projects') + '<div class="empty">Project not found.</div>';
+  const pr = projProgress(p);
+  const work = p.members.map((m) => { const mine = p.tasks.filter((t) => t.assignee === m.id); return { m, d: mine.filter((t) => t.done).length, t: mine.length }; });
+  const unassigned = p.tasks.filter((t) => !t.assignee || !p.members.some((m) => m.id === t.assignee)).length;
+  return goBtn('projects', 'All projects') + `<div class="card" style="border-top:6px solid ${colorOf(p.courseId)};margin-bottom:18px">
+    <div class="row"><h2 style="flex:1">${esc(p.title)}</h2>${p.due ? dueTag(p.due) : ''}<button class="btn ghost sm" data-act="proj-edit" data-id="${id}">✏️ Edit</button><button class="btn warn sm" data-act="proj-del" data-id="${id}">🗑</button></div>
+    <div style="margin:4px 0 10px">${courseTag(p.courseId)}${p.due ? ` <span class="small muted">· due ${fmtDate(p.due)}</span>` : ''}</div>${p.desc ? `<p style="margin:0 0 12px">${esc(p.desc)}</p>` : ''}
+    ${barRow(pr.p, pr.t ? `${pr.p}%` : '—')}<div class="small muted" style="margin-top:6px">${pr.t ? (pr.p >= 100 ? '🎉 All tasks done!' : `${pr.d} of ${pr.t} tasks done`) : 'Add tasks and assign them to your teammates.'}</div></div>
+    <div class="grid g2"><div class="card"><h3>👥 Team <span class="sp"></span><button class="btn ghost sm" data-act="member-add" data-id="${id}">➕ Add</button></h3>
+      ${work.map(({ m, d, t }) => `<div class="item">${avatar(p, m)}<div class="body"><div class="t">${esc(m.name)}</div><div class="small muted">${t ? `${d}/${t} tasks done` : 'No tasks assigned'}</div></div><button class="x" data-act="member-del" data-id="${id}" data-mid="${m.id}">✕</button></div>`).join('') || '<div class="empty">Add your teammates (you can add yourself too).</div>'}${unassigned ? `<div class="small muted" style="padding-top:8px">${unassigned} task(s) not assigned yet</div>` : ''}</div>
+    <div class="card"><h3>🧩 Tasks <span class="sp"></span><button class="btn ghost sm" data-act="ptask-add" data-id="${id}">➕ Add</button></h3>
+      ${p.tasks.map((t) => { const m = p.members.find((x) => x.id === t.assignee); return `<div class="item ${t.done ? 'done' : ''}"><input type="checkbox" ${t.done ? 'checked' : ''} data-chg="ptask-toggle" data-id="${id}" data-tid="${t.id}"><div class="body"><div class="t">${esc(t.title)}</div><div class="row" style="gap:6px">${m ? avatar(p, m) + `<span class="small muted">${esc(m.name)}</span>` : '<span class="small muted">Unassigned</span>'}</div></div>${t.due ? dueTag(t.due) : ''}<button class="x" data-act="ptask-edit" data-id="${id}" data-tid="${t.id}">✏️</button><button class="x" data-act="ptask-del" data-id="${id}" data-tid="${t.id}">🗑</button></div>`; }).join('') || '<div class="empty">No tasks yet.</div>'}</div>
+    <div class="card"><h3>🗒️ Project notes</h3><textarea data-note="project" data-id="${id}" placeholder="Ideas, meeting notes, links...">${esc(p.notes || '')}</textarea></div>
+    <div class="card"><h3>📎 Project files</h3>${filesBox('project:' + id)}</div></div>`;
+}
+
+/* ============ CALENDAR ============ */
+function viewCalendar() {
+  const wk = mondayOf(calAnchor);
+  const mo = new Date(calAnchor.getFullYear(), calAnchor.getMonth(), 1);
+  const label = calMode === 'week' ? `${fmtDate(iso(wk))} – ${fmtDate(iso(addDays(wk, 6)))}` : mo.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+  const head = `<div class="row" style="margin-bottom:16px"><div class="chips" style="margin:0">${['week', 'month'].map((m) => `<button class="chip ${calMode === m ? 'on' : ''}" data-act="cal-mode" data-k="${m}">${m === 'week' ? 'Week' : 'Month'}</button>`).join('')}</div><span class="sp"></span>
+    <button class="btn ghost sm" data-act="cal-nav" data-n="-1">◀</button><b style="min-width:140px;text-align:center">${label}</b><button class="btn ghost sm" data-act="cal-nav" data-n="1">▶</button><button class="btn sm" data-act="cal-today">Today</button></div>`;
+  return head + (calMode === 'week' ? weekGrid(wk) : monthGrid(mo));
+}
+function weekGrid(wk) {
+  let minH = 8, maxH = 17;
+  S.courses.forEach((c) => c.slots.forEach((s) => { minH = Math.min(minH, Math.floor(toMin(s.start) / 60)); maxH = Math.max(maxH, Math.ceil(toMin(s.end) / 60)); }));
+  const ph = 52, hours = maxH - minH, dl = deadlines(), t0 = todayISO();
+  let cols = '';
+  for (let i = 0; i < 7; i++) {
+    const d = addDays(wk, i), ds = iso(d);
+    const chips = dl.filter((x) => x.date === ds).map((x) => `<div class="chipx" style="--c:${colorOf(x.course)}" data-act="go" data-view="${x.go}" title="${esc(x.title)}">${KIND_ICON[x.kind]} ${esc(x.title)}</div>`).join('');
+    const blocks = S.courses.flatMap((c) => c.slots.filter((s) => s.day === i).map((s) => `<div class="blk" style="--c:${c.color};top:${(toMin(s.start) - minH * 60) / 60 * ph}px;height:${Math.max(24, (toMin(s.end) - toMin(s.start)) / 60 * ph - 2)}px">${esc(c.name)}<small>${s.start}–${s.end}${s.room ? ' · ' + esc(s.room) : ''}</small></div>`)).join('');
+    cols += `<div style="min-width:0"><div class="wk-head ${ds === t0 ? 'today' : ''}" data-act="day" data-d="${ds}" style="cursor:pointer">${DAYS[i]}<small>${d.getDate()}</small></div><div class="wk-all">${chips}</div><div class="wk-col" style="height:${hours * ph}px;background:repeating-linear-gradient(var(--line) 0 1px,transparent 1px ${ph}px)">${blocks}</div></div>`;
+  }
+  const hourCol = `<div><div class="wk-head">&nbsp;<small>&nbsp;</small></div><div class="wk-all"></div><div class="wk-hours" style="--ph:${ph}px">${Array.from({ length: hours }, (_, k) => `<div>${pad(minH + k)}:00</div>`).join('')}</div></div>`;
+  return `<div class="card wk-scroll" style="padding:12px"><div class="week">${hourCol}${cols}</div></div>`;
+}
+function monthGrid(mo) {
+  const start = mondayOf(mo), dl = deadlines(), t0 = todayISO();
+  const rows = Math.ceil((dayIdx(mo) + new Date(mo.getFullYear(), mo.getMonth() + 1, 0).getDate()) / 7);
+  let cells = '';
+  for (let i = 0; i < rows * 7; i++) {
+    const d = addDays(start, i), ds = iso(d), items = dl.filter((x) => x.date === ds);
+    cells += `<div class="cell ${d.getMonth() !== mo.getMonth() ? 'other' : ''} ${ds === t0 ? 'today' : ''}" data-act="day" data-d="${ds}"><b>${d.getDate()}</b>${items.slice(0, 2).map((x) => `<div class="chipx" style="--c:${colorOf(x.course)}">${KIND_ICON[x.kind]} ${esc(x.title)}</div>`).join('')}${items.length > 2 ? `<div class="more">+${items.length - 2} more</div>` : ''}</div>`;
+  }
+  return `<div class="month" style="margin-bottom:6px">${DAYS.map((d) => `<div class="mh">${d}</div>`).join('')}</div><div class="month">${cells}</div>`;
+}
+function dayDialog(ds) {
+  const d = parseISO(ds), cls = [];
+  S.courses.forEach((c) => c.slots.forEach((s) => { if (s.day === dayIdx(d)) cls.push({ c, s }); }));
+  cls.sort((a, b) => a.s.start.localeCompare(b.s.start));
+  const items = deadlines().filter((x) => x.date === ds);
+  const dlg = openModal(`<h3>${fmtLong(d)}</h3>${cls.length ? `<div class="group" style="margin-top:0">Classes</div>${cls.map(({ c, s }) => `<div class="item"><span class="dotc" style="background:${c.color}"></span><div class="body"><div class="t">${esc(c.name)}</div><div class="small muted">${s.start} – ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</div></div></div>`).join('')}` : ''}
+    ${items.length ? `<div class="group">Due</div>${items.map((x) => `<div class="item" style="cursor:pointer" data-act="go-close" data-view="${x.go}"><span style="font-size:20px">${KIND_ICON[x.kind]}</span><div class="body"><div class="t">${esc(x.title)}</div>${courseTag(x.course)}</div></div>`).join('')}` : ''}
+    ${!cls.length && !items.length ? '<div class="empty">Nothing planned. 🌿</div>' : ''}
+    <div class="row end"><button class="btn ghost" data-close>Close</button><button class="btn" data-act="task-add" data-due="${ds}" data-closeall>➕ Add task</button></div>`);
+  $$('[data-close]', dlg).forEach((b) => (b.onclick = () => dlg.close()));
+}
+
+/* ============ forms ============ */
+function askText(title, label, value, cb) {
+  formDialog(title, [{ name: 'v', label, required: true, value }], {}, (v) => cb(v.v));
+}
+function courseForm(id) {
+  const c = id ? courseOf(id) : null;
+  formDialog(c ? 'Edit course' : 'New course', [
+    { name: 'name', label: 'Course name', required: true, placeholder: 'e.g. Data Structures' },
+    { name: 'teacher', label: 'Instructor (optional)' },
+    { name: 'color', label: 'Colour', type: 'color' },
+  ], c || { color: COLORS[S.courses.length % COLORS.length] }, (v) => {
+    if (c) Object.assign(c, v); else S.courses.push({ id: uid(), name: v.name, teacher: v.teacher, color: v.color, slots: [], notes: '' });
+    commit();
+  });
+}
+function slotForm(id) {
+  formDialog('Add class time', [
+    { name: 'day', label: 'Day', type: 'select', options: DAYS_LONG.map((d, i) => ({ v: String(i), l: d })) },
+    { name: 'start', label: 'Starts', type: 'time', required: true, value: '09:00' },
+    { name: 'end', label: 'Ends', type: 'time', required: true, value: '10:30' },
+    { name: 'room', label: 'Room (optional)' },
+  ], {}, (v) => {
+    if (toMin(v.end) <= toMin(v.start)) return alert('The end time must be after the start time.');
+    courseOf(id).slots.push({ day: Number(v.day), start: v.start, end: v.end, room: v.room }); commit();
+  });
+}
+function examForm(id, courseId) {
+  const e = id ? S.exams.find((x) => x.id === id) : null;
+  formDialog(e ? 'Edit exam' : 'New exam', [
+    { name: 'courseId', label: 'Course', type: 'select', options: courseOptions() },
+    { name: 'type', label: 'Type', type: 'select', options: ['Midterm', 'Final', 'Quiz', 'Other'].map((x) => ({ v: x, l: x })) },
+    { name: 'title', label: 'Title (optional)', placeholder: 'e.g. Midterm 1' },
+    { name: 'date', label: 'Date', type: 'date', required: true },
+    { name: 'time', label: 'Time (optional)', type: 'time' },
+    { name: 'place', label: 'Place (optional)' },
+  ], e || { courseId: courseId || (S.courses[0] ? S.courses[0].id : '') }, (v) => {
+    if (e) Object.assign(e, v); else { const n = { id: uid(), topics: [], notes: '', ...v }; S.exams.push(n); view = 'exam:' + n.id; }
+    commit();
+  });
+}
+function taskForm(id, courseId, due) {
+  const t = id ? S.tasks.find((x) => x.id === id) : null;
+  formDialog(t ? 'Edit task' : 'New task', [
+    { name: 'title', label: 'What do you need to do?', required: true, placeholder: 'e.g. Homework 3' },
+    { name: 'courseId', label: 'Course', type: 'select', options: courseOptions() },
+    { name: 'due', label: 'Due date', type: 'date' },
+    { name: 'notes', label: 'Notes (optional)', type: 'textarea' },
+  ], t || { courseId: courseId || '', due: due || '' }, (v) => {
+    if (t) Object.assign(t, v); else S.tasks.push({ id: uid(), done: false, ...v });
+    commit();
+  });
+}
+function projForm(id, courseId) {
+  const p = id ? S.projects.find((x) => x.id === id) : null;
+  formDialog(p ? 'Edit project' : 'New group project', [
+    { name: 'title', label: 'Project name', required: true },
+    { name: 'courseId', label: 'Course', type: 'select', options: courseOptions() },
+    { name: 'due', label: 'Deadline', type: 'date' },
+    { name: 'desc', label: 'Short description (optional)', type: 'textarea' },
+  ], p || { courseId: courseId || '' }, (v) => {
+    if (p) Object.assign(p, v); else { const n = { id: uid(), done: false, members: [], tasks: [], notes: '', ...v }; S.projects.push(n); view = 'project:' + n.id; }
+    commit();
+  });
+}
+function ptaskForm(pid, tid) {
+  const p = S.projects.find((x) => x.id === pid), t = tid ? p.tasks.find((x) => x.id === tid) : null;
+  formDialog(t ? 'Edit task' : 'New project task', [
+    { name: 'title', label: 'Task', required: true },
+    { name: 'assignee', label: 'Assigned to', type: 'select', options: [{ v: '', l: '— Unassigned —' }].concat(p.members.map((m) => ({ v: m.id, l: m.name }))) },
+    { name: 'due', label: 'Due date (optional)', type: 'date' },
+  ], t || {}, (v) => { if (t) Object.assign(t, v); else p.tasks.push({ id: uid(), done: false, ...v }); commit(); });
+}
+
+/* ============ settings / backup / sample data ============ */
+function openSettings() {
+  const d = openModal(`<h3>⚙️ Settings</h3>
+    <form data-form="name"><label>Your name<input type="text" name="name" value="${esc(S.name)}" placeholder="What should I call you?"></label><div class="row end" style="margin-top:10px"><button class="btn sm">Save name</button></div></form>
+    <div class="group" style="margin:6px 0 0">Look</div><div class="chips"><button class="chip ${S.theme === 'light' ? 'on' : ''}" data-act="theme" data-k="light">☀️ Light</button><button class="chip ${S.theme === 'dark' ? 'on' : ''}" data-act="theme" data-k="dark">🌙 Cosy dark</button></div>
+    <div class="group" style="margin:6px 0 0">Your data</div><p class="small muted" style="margin:0">Everything is saved in this browser on this device. Export a backup now and then. (Uploaded files are not part of the backup.)</p>
+    <div class="row"><button class="btn ghost sm" data-act="export">⬇ Export backup</button><label class="btn ghost sm" style="cursor:pointer">⬆ Import backup<input type="file" accept="application/json" hidden data-import></label></div>
+    <div class="row"><button class="btn ghost sm" data-act="sample">✨ Load sample data</button><button class="btn warn sm" data-act="erase">🗑 Erase everything</button></div>
+    <div class="row end"><button class="btn" data-close>Done</button></div>`);
+  $('[data-close]', d).onclick = () => d.close();
+}
+function sampleData() {
+  const t = new Date(), D = (n) => iso(addDays(t, n)), id = uid;
+  const c1 = { id: id(), name: 'Data Structures', teacher: 'Dr. Yılmaz', color: COLORS[0], notes: '', slots: [{ day: 0, start: '09:00', end: '10:30', room: 'A101' }, { day: 2, start: '11:00', end: '12:30', room: 'A101' }] };
+  const c2 = { id: id(), name: 'Operating Systems', teacher: 'Prof. Demir', color: COLORS[1], notes: '', slots: [{ day: 1, start: '10:00', end: '12:00', room: 'B204' }, { day: 3, start: '13:30', end: '15:00', room: 'Lab 2' }] };
+  const c3 = { id: id(), name: 'Linear Algebra', teacher: 'Dr. Kaya', color: COLORS[2], notes: '', slots: [{ day: 2, start: '09:00', end: '10:30', room: 'C305' }, { day: 4, start: '10:00', end: '11:30', room: 'C305' }] };
+  const c4 = { id: id(), name: 'Academic English', teacher: 'Ms. Brown', color: COLORS[4], notes: '', slots: [{ day: 4, start: '13:00', end: '14:30', room: 'D12' }] };
+  const topic = (title, subs = [], done = false) => ({ id: id(), title, done, subs: subs.map(([s, d]) => ({ id: id(), title: s, done: !!d })) });
+  const m = [{ id: id(), name: 'Ecem' }, { id: id(), name: 'Mert' }, { id: id(), name: 'Zeynep' }];
+  S = Object.assign(defaults(), {
+    name: S.name || '', theme: S.theme, courses: [c1, c2, c3, c4],
+    exams: [
+      { id: id(), courseId: c1.id, type: 'Midterm', title: '', date: D(9), time: '10:00', place: 'Hall 3', notes: 'Bring a calculator. Past papers are on the course page.', topics: [topic('Arrays & linked lists', [['Singly linked list', 1], ['Doubly linked list', 1], ['Array vs list', 0]]), topic('Stacks & queues', [['Stack applications', 1], ['Circular queue', 0]]), topic('Trees', [['Binary trees'], ['BST operations'], ['Tree traversals']]), topic('Recursion', [], true)] },
+      { id: id(), courseId: c3.id, type: 'Quiz', title: 'Quiz 2', date: D(3), time: '10:00', place: 'C305', notes: '', topics: [topic('Matrix multiplication', [], true), topic('Determinants', [['2x2', 1], ['3x3', 0]]), topic('Inverse matrices')] },
+      { id: id(), courseId: c2.id, type: 'Final', title: '', date: D(34), time: '14:00', place: 'Hall 1', notes: '', topics: [] },
+    ],
+    tasks: [
+      { id: id(), courseId: c3.id, title: 'Homework 4', due: D(-1), done: false, notes: 'Chapters 3 and 4' },
+      { id: id(), courseId: c1.id, title: 'Lab report: linked lists', due: D(1), done: false, notes: '' },
+      { id: id(), courseId: c4.id, title: 'Essay draft', due: D(5), done: false, notes: '500 words' },
+      { id: id(), courseId: c2.id, title: 'Read chapter 6', due: D(12), done: false, notes: '' },
+      { id: id(), courseId: c1.id, title: 'Homework 2', due: D(-6), done: true, notes: '' },
+    ],
+    projects: [{ id: id(), courseId: c2.id, title: 'Mini shell project', due: D(14), done: false, desc: 'Build a tiny Unix-like shell in C.', notes: 'Meeting on Thursday after class.', members: m,
+      tasks: [{ id: id(), title: 'Parse commands', assignee: m[0].id, due: D(4), done: true }, { id: id(), title: 'Pipes and redirection', assignee: m[1].id, due: D(8), done: false }, { id: id(), title: 'Write the report', assignee: m[2].id, due: D(12), done: false }, { id: id(), title: 'Prepare the demo', assignee: '', due: D(13), done: false }] }],
+    files: [], lists: {
+      daily: [{ id: id(), title: 'Review today\'s lecture notes', doneOn: null }, { id: id(), title: '25 minutes of focused study', doneOn: null }, { id: id(), title: 'Drink water 💧', doneOn: periodKey('daily') }],
+      weekly: [{ id: id(), title: 'Tidy up my notes', doneOn: null }, { id: id(), title: 'Plan next week', doneOn: null }],
+      monthly: [{ id: id(), title: 'Backup my files', doneOn: null }],
+    },
+  });
+  $$('dialog').forEach((x) => x.close()); view = 'today'; commit();
+}
+
+/* ============ event handling ============ */
+const A = {
+  go: (el) => go(el.dataset.view),
+  'go-close': (el) => { $$('dialog').forEach((d) => d.close()); go(el.dataset.view); },
+  bell: () => { bellOpen = !bellOpen; render(); },
+  settings: () => openSettings(),
+  theme: (el) => { S.theme = el.dataset.k; $$('dialog').forEach((d) => d.close()); commit(); openSettings(); },
+  export: () => {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' }));
+    a.download = `studynest-backup-${todayISO()}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  },
+  sample: () => { if (!S.courses.length || confirm('Replace your current data with the sample data?')) sampleData(); },
+  erase: () => { if (confirm('Erase ALL your data on this device? This cannot be undone.') && confirm('Really erase everything?')) { S = defaults(); $$('dialog').forEach((d) => d.close()); view = 'today'; commit(); } },
+  filter: (el) => { taskFilter = el.dataset.k; render(); },
+  'cal-mode': (el) => { calMode = el.dataset.k; render(); },
+  'cal-nav': (el) => { const n = Number(el.dataset.n); if (calMode === 'week') calAnchor = addDays(calAnchor, 7 * n); else calAnchor = new Date(calAnchor.getFullYear(), calAnchor.getMonth() + n, 1); render(); },
+  'cal-today': () => { calAnchor = new Date(); render(); },
+  day: (el) => dayDialog(el.dataset.d),
+  'course-add': () => courseForm(), 'course-edit': (el) => courseForm(el.dataset.id),
+  'course-del': (el) => { if (!confirm('Delete this course? Its exams, tasks and projects stay but lose their course label.')) return; S.courses = S.courses.filter((c) => c.id !== el.dataset.id); view = 'courses'; commit(); },
+  'slot-add': (el) => slotForm(el.dataset.id), 'slot-del': (el) => { courseOf(el.dataset.id).slots.splice(Number(el.dataset.i), 1); commit(); },
+  'exam-add': (el) => examForm(null, el.dataset.course), 'exam-edit': (el) => examForm(el.dataset.id),
+  'exam-del': (el) => { if (!confirm('Delete this exam and its topics?')) return; S.exams = S.exams.filter((e) => e.id !== el.dataset.id); view = 'exams'; commit(); },
+  'sub-add': (el) => askText('Add subtopic', 'Subtopic', '', (v) => { const tp = S.exams.find((e) => e.id === el.dataset.id).topics.find((x) => x.id === el.dataset.tid); tp.subs = tp.subs || []; tp.subs.push({ id: uid(), title: v, done: false }); commit(); }),
+  'topic-rename': (el) => { const tp = S.exams.find((e) => e.id === el.dataset.id).topics.find((x) => x.id === el.dataset.tid); askText('Rename topic', 'Topic', tp.title, (v) => { tp.title = v; commit(); }); },
+  'topic-del': (el) => { const e = S.exams.find((x) => x.id === el.dataset.id); e.topics = e.topics.filter((x) => x.id !== el.dataset.tid); commit(); },
+  'sub-del': (el) => { const tp = S.exams.find((e) => e.id === el.dataset.id).topics.find((x) => x.id === el.dataset.tid); tp.subs = tp.subs.filter((s) => s.id !== el.dataset.sid); commit(); },
+  'task-add': (el) => { $$('dialog').forEach((d) => d.close()); taskForm(null, el.dataset.course, el.dataset.due); }, 'task-edit': (el) => taskForm(el.dataset.id),
+  'task-del': (el) => { S.tasks = S.tasks.filter((t) => t.id !== el.dataset.id); commit(); },
+  'proj-add': (el) => projForm(null, el.dataset.course), 'proj-edit': (el) => projForm(el.dataset.id),
+  'proj-del': (el) => { if (!confirm('Delete this project?')) return; S.projects = S.projects.filter((p) => p.id !== el.dataset.id); view = 'projects'; commit(); },
+  'member-add': (el) => askText('Add team member', 'Name', '', (v) => { S.projects.find((p) => p.id === el.dataset.id).members.push({ id: uid(), name: v }); commit(); }),
+  'member-del': (el) => { const p = S.projects.find((x) => x.id === el.dataset.id); p.members = p.members.filter((m) => m.id !== el.dataset.mid); commit(); },
+  'ptask-add': (el) => ptaskForm(el.dataset.id), 'ptask-edit': (el) => ptaskForm(el.dataset.id, el.dataset.tid),
+  'ptask-del': (el) => { const p = S.projects.find((x) => x.id === el.dataset.id); p.tasks = p.tasks.filter((t) => t.id !== el.dataset.tid); commit(); },
+  'li-del': (el) => { S.lists[el.dataset.kind] = S.lists[el.dataset.kind].filter((i) => i.id !== el.dataset.id); commit(); },
+  'file-dl': (el) => downloadFile(el.dataset.id), 'file-del': (el) => { if (confirm('Delete this file?')) removeFile(el.dataset.id); },
+  course: () => {},
+};
+const C = {
+  'task-toggle': (el) => { const t = S.tasks.find((x) => x.id === el.dataset.id); t.done = el.checked; if (el.checked) confetti(); commit(); },
+  'ptask-toggle': (el) => { const p = S.projects.find((x) => x.id === el.dataset.id); p.tasks.find((t) => t.id === el.dataset.tid).done = el.checked; if (el.checked && projProgress(p).p === 100) confetti(); commit(); },
+  'li-toggle': (el) => { const i = S.lists[el.dataset.kind].find((x) => x.id === el.dataset.id); i.doneOn = el.checked ? periodKey(el.dataset.kind) : null; if (el.checked && S.lists[el.dataset.kind].every((x) => x.doneOn === periodKey(el.dataset.kind))) confetti(); commit(); },
+  'topic-toggle': (el) => {
+    const e = S.exams.find((x) => x.id === el.dataset.id), tp = e.topics.find((x) => x.id === el.dataset.tid);
+    if (tp.subs && tp.subs.length) tp.subs.forEach((s) => (s.done = el.checked)); else tp.done = el.checked;
+    if (el.checked && leaves(e).p === 100) confetti(); commit();
+  },
+  'sub-toggle': (el) => {
+    const e = S.exams.find((x) => x.id === el.dataset.id), tp = e.topics.find((x) => x.id === el.dataset.tid);
+    tp.subs.find((s) => s.id === el.dataset.sid).done = el.checked; tp.done = tp.subs.every((s) => s.done);
+    if (el.checked && leaves(e).p === 100) confetti(); commit();
+  },
+};
+document.addEventListener('click', (e) => {
+  if (bellOpen && !e.target.closest('.panel') && !e.target.closest('[data-act=bell]') && !e.target.closest('[data-act=go]')) { bellOpen = false; render(); }
+  const el = e.target.closest('[data-act]');
+  if (el && A[el.dataset.act]) { e.stopPropagation(); A[el.dataset.act](el, e); }
+});
+document.addEventListener('change', (e) => {
+  const t = e.target;
+  if (t.dataset.chg && C[t.dataset.chg]) C[t.dataset.chg](t);
+  else if (t.dataset.upload) { addFiles(t.dataset.upload, [...t.files]); t.value = ''; }
+  else if (t.hasAttribute('data-import')) {
+    const f = t.files[0]; if (!f) return;
+    f.text().then((txt) => {
+      const j = JSON.parse(txt); if (!j || !Array.isArray(j.courses)) throw 0;
+      if (!confirm('Replace your current data with this backup?')) return;
+      S = Object.assign(defaults(), j); $$('dialog').forEach((d) => d.close()); commit();
+    }).catch(() => alert('That file is not a valid StudyNest backup.'));
+    t.value = '';
+  }
+});
+document.addEventListener('input', (e) => {
+  const n = e.target.dataset && e.target.dataset.note; if (!n) return;
+  const arr = { course: S.courses, exam: S.exams, project: S.projects }[n]; const o = arr.find((x) => x.id === e.target.dataset.id);
+  if (o) { o.notes = e.target.value; save(); }
+});
+document.addEventListener('submit', (e) => {
+  const f = e.target.closest('[data-form]'); if (!f) return;
+  e.preventDefault();
+  const v = Object.fromEntries(new FormData(f).entries()), kind = f.dataset.form, title = (v.title || '').trim();
+  if (kind === 'name') { S.name = (v.name || '').trim(); $$('dialog').forEach((d) => d.close()); commit(); }
+  else if (kind === 'li-add' && title) { S.lists[f.dataset.kind].push({ id: uid(), title, doneOn: null }); refocus = `form[data-kind="${f.dataset.kind}"] input`; commit(); }
+  else if (kind === 'topic-add' && title) { S.exams.find((x) => x.id === f.dataset.id).topics.push({ id: uid(), title, done: false, subs: [] }); refocus = 'form[data-form="topic-add"] input'; commit(); }
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && bellOpen) { bellOpen = false; render(); } });
+document.addEventListener('visibilitychange', () => { if (!document.hidden && !$('dialog[open]')) render(); });
+render();
+
+</script>
+</body>
+</html>
