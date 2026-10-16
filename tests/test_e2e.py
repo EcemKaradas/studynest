@@ -167,3 +167,51 @@ def test_works_on_a_phone_without_horizontal_scroll(page):
     for tab in ["Today", "Courses", "Exams", "Tasks", "Projects", "Lists"]:
         page.click(f'.nav:has-text("{tab}")')
         assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth + 1"), tab
+
+
+# ---------- Ask StudyNest (rule-based assistant) ----------
+def ask(pg, question):
+    if not pg.is_visible(".ask-form"):
+        pg.click(".ask-fab")
+    pg.fill(".ask-form input", question)
+    pg.keyboard.press("Enter")
+    pg.wait_for_timeout(100)
+    return pg.inner_text(".ask-msgs .bot:last-child")
+
+
+def test_assistant_answers_from_planner_data(page):
+    page.click("text=Try with sample data")
+    page.wait_for_timeout(200)
+    assert "Quiz 2" in ask(page, "When is my next exam?")
+    topics = ask(page, "What topics are in the Data Structures midterm?")
+    assert "Arrays & linked lists" in topics and "Tree traversals" in topics and "44%" in topics
+    assert "Homework 4" in ask(page, "Show my overdue tasks")
+    assert "Pipes and redirection" in ask(page, "Which tasks are assigned to Mert?")
+    assert "Determinants" in ask(page, "What should I study first?")
+
+
+def test_assistant_understands_turkish_questions(page):
+    page.click("text=Try with sample data")
+    page.wait_for_timeout(200)
+    assert "Quiz 2" in ask(page, "en yakın sınav ne zaman?")
+    assert "Homework 4" in ask(page, "gecikmiş ödevlerim")
+    assert "Mini shell project" in ask(page, "en yakın projem hangisi")
+
+
+def test_assistant_handles_empty_planner_and_unknown_questions(page):
+    assert "empty" in ask(page, "what is due this week").lower()
+    page.click("text=Load sample data >> nth=0")
+    page.wait_for_timeout(200)
+    assert "did not understand" in ask(page, "blah blah")
+
+
+def test_assistant_reflects_changes_immediately(page):
+    page.click("text=Try with sample data")
+    page.wait_for_timeout(200)
+    assert "50%" in ask(page, "Quiz 2 progress")
+    page.click(".ask-fab")  # close the panel to reach the page underneath
+    page.click('.nav:has-text("Exams")')
+    page.click("text=Quiz 2")
+    page.click('.topic:has-text("Inverse") input[type=checkbox]')
+    page.click('.topic:has-text("Determinants") input[type=checkbox]')
+    assert "100%" in ask(page, "Quiz 2 progress")
