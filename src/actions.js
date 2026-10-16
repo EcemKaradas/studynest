@@ -117,7 +117,8 @@ function sampleData() {
 
 /* ============ event handling ============ */
 const A = {
-  go: (el) => go(el.dataset.view),
+  go: (el) => { if (el.closest('.ask-panel') && window.innerWidth <= 900) assistClose(); go(el.dataset.view); },
+  ask: (el) => assistAsk(el.dataset.q), assist: () => assistToggle(), 'assist-close': () => assistClose(),
   'go-close': (el) => { $$('dialog').forEach((d) => d.close()); go(el.dataset.view); },
   bell: () => { bellOpen = !bellOpen; render(); },
   settings: () => openSettings(),
