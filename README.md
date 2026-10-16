@@ -26,6 +26,7 @@ StudyNest is the result. I use it for my own university life.
 | ✅ **Assignments** | Tasks grouped into overdue, today, this week and later. |
 | 👥 **Group projects** | Team members, tasks assigned to people, per-person progress, project notes and files. |
 | 🔁 **Repeating lists** | Daily, weekly and monthly lists that reset on their own when the day, week or month changes. |
+| 💬 **Ask StudyNest** | A built-in assistant that answers questions from your own data: *"What is due this week?"*, *"What topics are in the midterm?"*, *"What should I study first?"*. Works offline, no account, English and Turkish questions. |
 | 🔔 **Reminders** | A notification box for deadlines and exams that are coming up. |
 | 📎 **Notes and files** | Upload PDFs, slides and notes to courses, exams and projects. |
 | 🎨 **Look and feel** | Soft colours, light and cosy dark theme, encouraging messages and small celebrations when you finish something. |
@@ -38,7 +39,11 @@ StudyNest is the result. I use it for my own university life.
 </tr>
 <tr>
 <td><img src="docs/calendar.png" alt="Weekly timetable"><br><sub>Weekly timetable with deadlines</sub></td>
+<td><img src="docs/assistant.png" alt="Ask StudyNest assistant"><br><sub>Ask StudyNest: questions answered from your own data</sub></td>
+</tr>
+<tr>
 <td><img src="docs/dark.png" alt="Dark theme"><br><sub>Cosy dark theme</sub></td>
+<td></td>
 </tr>
 </table>
 
@@ -54,7 +59,8 @@ StudyNest is the result. I use it for my own university life.
 - **Event delegation.** A handful of delegated listeners drive the whole UI through `data-*` attributes, instead of attaching handlers to every element.
 - **Responsive and accessible.** Layout adapts from desktop sidebar to a phone bottom bar, respects `prefers-reduced-motion`, and uses labelled buttons and native form controls.
 - **Safe rendering.** All user text is escaped before it is put into the page.
-- **Tested end to end.** Eight Playwright tests drive the app in a real browser: first run, exam progress maths, persistence after reload, file upload and download, reminders, project assignment, list resets, backup round trip, and a phone layout check.
+- **A small question-answering assistant, no AI model needed.** "Ask StudyNest" understands a question in two separate steps: `understand()` normalises the text (including Turkish characters and word endings) and detects the intent and the entities (course, exam type, team member, time frame), then an answer builder queries the planner data and renders the result. Because every answer comes from the real data it cannot make things up, it works offline, and it costs nothing to run. The two steps are separated on purpose, so a language model could later replace `understand()` without touching the answer builders.
+- **Tested end to end.** Twelve Playwright tests drive the app in a real browser: first run, exam progress maths, persistence after reload, file upload and download, reminders, project assignment, list resets, backup round trip, a phone layout check, and the assistant (English and Turkish questions, empty planner, answers updating after a change).
 
 ## Tech
 
@@ -79,6 +85,7 @@ index.html        the complete app (generated from src/)
 src/
   core.js         helpers, state and storage, progress and deadline logic, file storage
   views.js        every screen: today, calendar, courses, exams, tasks, projects, lists
+  assistant.js    "Ask StudyNest": question understanding, answer builders, chat panel
   actions.js      forms, event handling, settings, sample data
   style.css       styles and themes
   build.py        bundles src/ into index.html
@@ -99,6 +106,7 @@ I designed the product myself (the feature list, screens and how it should feel)
 - [ ] Installable app with offline support (PWA)
 - [ ] Turkish language option
 - [ ] Study timer (Pomodoro) connected to exam topics
+- [ ] Optional language-model mode for the assistant (bring your own API key) for free-form questions
 
 ---
 
