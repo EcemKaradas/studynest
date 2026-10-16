@@ -24,11 +24,12 @@ html=f'''<!DOCTYPE html>
 <script>
 {r('core.js')}
 {r('views.js')}
+{r('assistant.js')}
 {r('actions.js')}
 </script>
 </body>
 </html>
 '''
 open(os.path.join(d,'..','index.html'),'w',encoding='utf8').write(html)
-open(os.path.join(d,'bundle.js'),'w',encoding='utf8').write(r('core.js')+r('views.js')+r('actions.js'))
+open(os.path.join(d,'bundle.js'),'w',encoding='utf8').write(r('core.js')+r('views.js')+r('assistant.js')+r('actions.js'))
 print(len(html))
