@@ -114,7 +114,27 @@ dialog label{display:grid;gap:5px;font-weight:700;font-size:14px}
 @keyframes fly{from{opacity:1;transform:translate(0,0) rotate(0)}to{opacity:0;transform:translate(var(--dx),-240px) rotate(300deg)}}
 .file{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
 .file:last-child{border-bottom:0}
+/* assistant */
+#assistant{position:fixed;right:20px;bottom:20px;z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.ask-fab{width:56px;height:56px;border-radius:50%;border:0;background:var(--brand);color:#fff;font-size:24px;cursor:pointer;box-shadow:0 8px 26px rgba(124,108,240,.45)}
+.ask-fab:hover{filter:brightness(1.08)}
+.ask-panel{width:min(400px,94vw);height:min(560px,70vh);display:flex;flex-direction:column;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:20px;box-shadow:0 14px 50px rgba(0,0,0,.28);overflow:hidden}
+.ask-panel header{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--brand-soft);border-bottom:1px solid var(--line)}
+.ask-panel header>div{flex:1;display:grid}.ask-panel header small{color:var(--muted);font-weight:600;font-size:12px}
+.ask-msgs{flex:1;overflow:auto;padding:12px;display:grid;gap:10px;align-content:start}
+.ask-msgs .m{max-width:94%;padding:9px 12px;border-radius:16px;font-size:14.5px;overflow-wrap:anywhere}
+.ask-msgs .m p{margin:0 0 6px}.ask-msgs .m p:last-child{margin:0}
+.ask-msgs .me{justify-self:end;background:var(--brand);color:#fff;border-bottom-right-radius:4px}
+.ask-msgs .bot{justify-self:start;background:var(--bg,var(--brand-soft));border:1px solid var(--line);border-bottom-left-radius:4px;width:94%}
+.ask-msgs .bot .item{padding:7px 0}
+.acard{padding:8px 0;border-top:1px solid var(--line)}.acard:first-of-type{border-top:0}
+.sugs{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.sugs .chip{padding:4px 12px;font-size:13px;margin:0;text-align:left}
+.ask-form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}
+.ask-form input{flex:1;min-width:0}
 @media(max-width:900px){
+  #assistant{right:12px;bottom:calc(86px + env(safe-area-inset-bottom))}
+  .ask-panel{height:min(520px,64vh)}
   .shell{grid-template-columns:1fr}
   .side{position:fixed;bottom:0;top:auto;left:0;right:0;height:auto;z-index:15;flex-direction:row;overflow-x:auto;padding:6px 6px calc(6px + env(safe-area-inset-bottom));border-right:0;border-top:1px solid var(--line);gap:2px}
   .logo{display:none}
